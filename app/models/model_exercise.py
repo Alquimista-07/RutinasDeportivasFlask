@@ -23,10 +23,13 @@ class Exercise(db.Model, UserMixin):
         return Exercise.query.get(id_ejercicio)
 
     @staticmethod
-    def update_exercise():
-        db.session.update()
-        db.session.commit()
-        db.session.close()
+    def update_exercise(exercise):
+        if not exercise:
+            db.session.merge(exercise)
+            db.session.commit()
+            db.session.close()
+        else:
+            print('El ejercicio ingresado no existe')
 
     @staticmethod
     def delete_exercise(exercise):

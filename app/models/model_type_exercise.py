@@ -23,10 +23,12 @@ class Type_Exercise(db.Model, UserMixin):
 
     @staticmethod
     def update_type_exercise(type_exercise):
-        print(type_exercise)
-        db.session.update(type_exercise)
-        db.session.commit()
-        db.session.close()
+        if not type_exercise:
+            db.session.merge(type_exercise)
+            db.session.commit()
+            db.session.close()
+        else:
+            print('El tipo de ejercicio ingresado no existe')
 
     @staticmethod
     def delete_exercise(type_exercise):
