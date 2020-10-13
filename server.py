@@ -6,9 +6,14 @@ APP = Flask(__name__, instance_relative_config=True)
 APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/rutinas'
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(APP)
-from app.controllers.rutinas_controller import ROUTINES
-APP.register_blueprint(ROUTINES)
 
+from app.controllers.rutinas_controller import ROUTINES
+from app.controllers.rutinas_controller import TYPE_EXERCISE
+from app.controllers.rutinas_controller import EXERCISE
+
+APP.register_blueprint(ROUTINES)
+APP.register_blueprint(TYPE_EXERCISE)
+APP.register_blueprint(EXERCISE)
 
 @APP.errorhandler(Exception)
 def handle_exception(error):
