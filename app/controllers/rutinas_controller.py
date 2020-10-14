@@ -6,7 +6,8 @@ EXERCISE = Blueprint('exercise', __name__)
 
 from app.models.model_user import User
 from app.models.model_type_exercise import Type_Exercise
-from app.models.model_exercise import Exercise
+from app.models.model_exercise import Exercise, BodyPart
+
 
 @ROUTINES.route('/health', methods=['GET', 'OPTIONS'])
 def index():
@@ -79,7 +80,7 @@ def delete_type_exercise():
         print('Error causado por: ', e)
         raise e
 
-@EXERCISE.route('/createExercise', methods=['POST'])
+@EXERCISE.route('/createexercise', methods=['POST'])
 def create_exercise():
     """Create exercise in database with reltionship"""
     request_body = request.json
@@ -87,7 +88,10 @@ def create_exercise():
     id_tipo_ejercicio = request_body['id_tipo_ejercicio']
     nombre_ejercicio = request_body['nombre_ejercicio']
     dsc_ejercicio = request_body['dsc_ejercicio']
+    bodyPart = BodyPart(id_musculo=9, dsc_musculo="desc")
     exercise = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio, nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
+    bodyPart.ejercicio.append(exercise)
+    exercise.bodyparts.append(bodyPart)
     print(exercise)
     try:
         exercise.save_exercise()
@@ -110,3 +114,24 @@ def delete_exercise():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
+
+@ROUTINES.route('/createbodypart', methods=['POST'])
+def create_body_part():
+    """Create bodyPart in database"""
+    request_body = request.json
+    id_musculo = request_body["id_musculo"]
+    dsc_musculo = request_body["dsc_musculo"]
+
+    bodyPart = BodyPart(id_musculo=id_musculo, dsc_musculo=dsc_musculo)
+    exercise = Exercise(id_ejercicio=10, id_tipo_ejercicio=1,
+                        nombre_ejercicio="nombre", dsc_ejercicio="desc")
+    bodyPart.ejercicio.append(exercise)
+    exercise.bodyparts.append(bodyPart)
+    try:
+        bodyPart.save_body_part()
+        response = Response(status=200, mimetype='application/json')
+        return response
+    except Exception as exception:
+        print('Error : ', exception)
+        raise exception
