@@ -33,3 +33,15 @@ class User(db.Model, UserMixin):
     @staticmethod
     def get_by_email(email):
         return User.query.filter_by(email=email).first()
+
+    @staticmethod
+    def update_user(user):
+        db.session.merge(user)
+        db.session.commit()
+        db.session.close()
+
+    @staticmethod
+    def delete_user(user):
+        db.session.delete(user)
+        db.session.commit()
+        db.session.close()

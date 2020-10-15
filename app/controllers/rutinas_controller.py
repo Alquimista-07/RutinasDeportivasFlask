@@ -39,6 +39,44 @@ def create_user():
         print('Error : ', exception)
         raise exception
 
+
+@ROUTINES.route('/updateuser', methods=['PUT'])
+def update_user():
+    """Update user in database"""
+    request_body = request.json
+    id_user = request_body["id"]
+    name = request_body["name"]
+    email = request_body["email"]
+    password = request_body["password"]
+    is_admin = request_body["is_admin"]
+    try:
+        user_exists = User.get_by_id(id_user)
+        if user_exists:
+            user_exists = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
+            User.update_user(user_exists)
+            response = Response(status=200, mimetype='application/json')
+            return response
+    except Exception as exception:
+        print('Error : ', exception)
+        raise exception
+
+@TYPE_EXERCISE.route('/deleteuser', methods=['DELETE'])
+def deleteuser():
+    """Delete type exercise from database"""
+    request_body = request.json
+    id = request_body['id']
+    try:
+        user = User.get_by_id(id)
+        if user:
+            user.delete_user(user)
+            response = Response(status=200, mimetype='application/json', response='Usuario eliminado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El usuario ingresado no existe')
+        return response
+    except Exception as exception:
+        print('Error: ', exception)
+        raise exception
+
 @TYPE_EXERCISE.route('/createtypeexercise', methods=['POST'])
 def create_type_excercise():
     """Create type exercise in database"""
