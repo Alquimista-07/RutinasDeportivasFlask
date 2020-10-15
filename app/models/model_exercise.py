@@ -34,8 +34,8 @@ class Exercise(db.Model, UserMixin):
         return Exercise.query.get(id_ejercicio)
 
     @staticmethod
-    def update_exercise():
-        db.session.update()
+    def update_exercise(exercise):
+        db.session.merge(exercise)
         db.session.commit()
         db.session.close()
 
