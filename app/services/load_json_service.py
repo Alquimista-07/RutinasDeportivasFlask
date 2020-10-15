@@ -1,6 +1,7 @@
 import json
 import requests
 from app.models.model_user import User
+from app.services import user_service
 
 def create_user_from_json():
     my_file = open('app/resource/dataUsers.json')
@@ -13,7 +14,7 @@ def create_user_from_json():
         password = values["password"]
         is_admin = values["is_admin"]
         user = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
-        user.save()
+        user_service.save(user)
         print(user)
     my_file.close()
 
@@ -31,6 +32,6 @@ def create_user_from_web_service():
         password = "password"
         is_admin = True
         user = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
-        user.save()
+        user_service.save(user)
 
 

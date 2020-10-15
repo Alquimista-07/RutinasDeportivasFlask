@@ -13,7 +13,7 @@ from app.models.model_exercise import Exercise, BodyPart
 from app.models.model_exercise import Exercise
 from app.models.model_specialist import Specialist
 from app.models.model_registry import Registry
-from app.services import load_json_service
+from app.services import load_json_service, specialist_service, registry_service, type_exercise_service, user_service
 
 @ROUTINES.route('/health', methods=['GET', 'OPTIONS'])
 def index():
@@ -32,7 +32,7 @@ def create_user():
     is_admin = request_body["is_admin"]
     user = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
     try:
-        user.save()
+        user_service.save(user)
         response = json.dumps({"Message" : "Usuario creado satisfactoriamente"}), 200
         return response
     except Exception as exception:
@@ -50,10 +50,10 @@ def update_user():
     password = request_body["password"]
     is_admin = request_body["is_admin"]
     try:
-        user_exists = User.get_by_id(id_user)
+        user_exists = user_service.get_by_id(id_user)
         if user_exists:
             user_exists = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
-            User.update_user(user_exists)
+            user_service.update_user(user_exists)
             response = json.dumps({"Message" : "Usuario actualizado satisfactoriamente"}), 200
             return response
     except Exception as exception:
@@ -66,9 +66,9 @@ def deleteuser():
     request_body = request.json
     id = request_body['id']
     try:
-        user = User.get_by_id(id)
+        user = user_service.get_by_id(id)
         if user:
-            user.delete_user(user)
+            user_service.delete_user(user)
             response = json.dumps({"Message": "Usuario eliminado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El usuario ingresado no existe"}), 406
@@ -86,7 +86,7 @@ def create_type_excercise():
     type_exercise = Type_Exercise(id_tipo_ejercicio=id_tipo, dsc_tipo_ejercicio=dsc_tipo)
     print(type_exercise)
     try:
-        type_exercise.save_type_exercise()
+        type_exercise_service.save_type_exercise(type_exercise)
         response = json.dumps({"Message": "Tipo de ejercicio creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
@@ -100,10 +100,10 @@ def update_type_exercise():
     id_tipo = request_body["id_tipo"]
     dsc_tipo = request_body["dsc_tipo"]
     try:
-        type_exercise_exist = Type_Exercise.get_by_id(id_tipo)
+        type_exercise_exist = type_exercise_service.get_by_id(id_tipo)
         if type_exercise_exist:
             type_exercise_exist = Type_Exercise(id_tipo_ejercicio=id_tipo, dsc_tipo_ejercicio=dsc_tipo)
-            Type_Exercise.update_type_exercise(type_exercise_exist)
+            type_exercise_service.update_type_exercise(type_exercise_exist)
             response = json.dumps({"Message": "Tipo de ejercicio actualizado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 406
@@ -119,9 +119,9 @@ def delete_type_exercise():
     request_body = request.json
     id_tipo_ejercicio = request_body['id_tipo_ejercicio']
     try:
-        type_exercise = Type_Exercise.get_by_id(id_tipo_ejercicio)
+        type_exercise = type_exercise_service.get_by_id(id_tipo_ejercicio)
         if type_exercise:
-            type_exercise.delete_exercise(type_exercise)
+            type_exercise_service.delete_exercise(type_exercise)
             response = json.dumps({"Message": "Tipo ejercicio eliminado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 406
@@ -136,8 +136,7 @@ def load_type_exercise():
     request_body = request.json
     ruta = request_body['ruta']
     try:
-        type_exersice = Type_Exercise()
-        type_exersice.load_archive(ruta)
+        type_exercise_service.load_archive(ruta)
         response = json.dumps({"Message": "Archivo TXT cargado satisfactoriamente"}), 200
         return response
     except Exception as e:
@@ -224,7 +223,7 @@ def create_specialist():
         specialist.registry = registry
     # ---------------
     try:
-        specialist.save_specialist()
+        specialist_service.save_specialist(specialist)
         response = json.dumps({"Message": "Especialista creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
@@ -240,11 +239,11 @@ def update_specialist():
     birthday_date = request_body["birthday_date"]
     professional_card = request_body["professional_card"]
     try:
-        specialist_exists = Specialist.get_by_id(id_specialist)
+        specialist_exists = specialist_service.get_by_id(id_specialist)
         if specialist_exists:
             specialist_exists = Specialist(id_especialista=id_specialist, nombre=name, fecha_nacimiento=birthday_date,
                                            tarjeta_profesional=professional_card)
-            specialist_exists.update_specialist(specialist_exists)
+            specialist_service.update_specialist(specialist_exists)
             response = json.dumps({"Message": "Especialista actualizado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El especialista ingresado no existe"}), 406
@@ -259,9 +258,9 @@ def delete_specialist():
     required_body = request.json
     id_specialist = required_body['id_specialist']
     try:
-        specialist = Specialist.get_by_id(id_specialist)
+        specialist = specialist_service.get_by_id(id_specialist)
         if specialist:
-            specialist.delete_specialist(specialist)
+            specialist_service.delete_specialist(specialist)
             response = json.dumps({"Message": "Especialista eliminado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El especialista ingresado no existe"}), 406
@@ -277,8 +276,7 @@ def load_specialist():
     request_body = request.json
     ruta = request_body['ruta']
     try:
-        specialist = Specialist()
-        specialist.load_archive_csv(ruta)
+        specialist_service.load_archive_csv(ruta)
         response = json.dumps({"Message": "Archivo CSV cargado satisfactoriamente"}), 200
         return response
     except Exception as e:
@@ -291,8 +289,7 @@ def load_masive_specialist():
     request_body = request.json
     ruta = request_body['ruta']
     try:
-        specialist = Specialist()
-        load = specialist.load_masive(ruta)
+        load = specialist_service.load_masive(ruta)
         response = json.dumps({"Message" : "Carga Masiva satisfactoriamente", "Time_lapsed" : load})
         return response
     except Exception as e:
@@ -306,8 +303,7 @@ def list_specialist():
     dir = request_body['ruta']
     file_name = request_body['file_name']
     try:
-        specialist = Specialist()
-        specialist.donwload_json_specialist(dir, file_name)
+        specialist_service.donwload_json_specialist(dir, file_name)
         response = json.dumps({"Message": "Especialistas descargado a JSON satisfactoriamente"}), 200
         return response
     except Exception as e:
@@ -324,7 +320,7 @@ def create_registry():
     registry = Registry(id_registro=id_registry, fecha_registro=date_registry)
     print(registry)
     try:
-        registry.save_registry()
+        registry_service.save_registry(registry)
         response = json.dumps({"Message": "Registro creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
@@ -338,10 +334,10 @@ def update_registry():
     id_registry = request_body["id_registry"]
     date_registry = request_body["date_registry"]
     try:
-        registry_exists = Registry.get_by_id(id_registry)
+        registry_exists = registry_service.get_by_id(id_registry)
         if registry_exists:
             registry_exists = Registry(id_registro=id_registry, fecha_registro=date_registry)
-            registry_exists.update_registry(registry_exists)
+            registry_service.update_registry(registry_exists)
             response = json.dumps({"Message": "Registro actualizado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El registro ingresado no existe"}), 406
@@ -356,10 +352,10 @@ def delete_registy():
     request_body = request.json
     id_registry = request_body['id_registry']
     try:
-        registry = Registry.get_by_id(id_registry)
+        registry = registry_service.get_by_id(id_registry)
         print("registro", registry)
         if registry:
-            registry.delete_registry(registry)
+            registry_service.delete_registry(registry)
             response = json.dumps({"Message": "Registro eliminado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El registro ingresado no existe"}), 406
