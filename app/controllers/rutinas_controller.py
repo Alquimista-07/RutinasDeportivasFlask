@@ -33,7 +33,7 @@ def create_user():
     user = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
     try:
         user.save()
-        response = Response(status=200, mimetype='application/json')
+        response = json.dumps({"Message" : "Usuario creado satisfactoriamente"}), 200
         return response
     except Exception as exception:
         print('Error : ', exception)
@@ -54,7 +54,7 @@ def update_user():
         if user_exists:
             user_exists = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
             User.update_user(user_exists)
-            response = Response(status=200, mimetype='application/json')
+            response = json.dumps({"Message" : "Usuario actualizado satisfactoriamente"}), 200
             return response
     except Exception as exception:
         print('Error : ', exception)
@@ -69,9 +69,9 @@ def deleteuser():
         user = User.get_by_id(id)
         if user:
             user.delete_user(user)
-            response = Response(status=200, mimetype='application/json', response='Usuario eliminado satisfactoriamente')
+            response = json.dumps({"Message": "Usuario eliminado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El usuario ingresado no existe')
+            response = json.dumps({"Message": "El usuario ingresado no existe"}), 406
         return response
     except Exception as exception:
         print('Error: ', exception)
@@ -87,7 +87,7 @@ def create_type_excercise():
     print(type_exercise)
     try:
         type_exercise.save_type_exercise()
-        response = Response(status=200, mimetype='application/json', response='Tipo de ejercicio creado satisfactoriamente')
+        response = json.dumps({"Message": "Tipo de ejercicio creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
         print('Error causado por: ', e)
@@ -104,9 +104,9 @@ def update_type_exercise():
         if type_exercise_exist:
             type_exercise_exist = Type_Exercise(id_tipo_ejercicio=id_tipo, dsc_tipo_ejercicio=dsc_tipo)
             Type_Exercise.update_type_exercise(type_exercise_exist)
-            response = Response(status=200, mimetype='application/json', response='Tipo de ejercicio actualizado satisfactoriamente')
+            response = json.dumps({"Message": "Tipo de ejercicio actualizado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El tipo de ejercicio ingresado no existe')
+            response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -122,9 +122,9 @@ def delete_type_exercise():
         type_exercise = Type_Exercise.get_by_id(id_tipo_ejercicio)
         if type_exercise:
             type_exercise.delete_exercise(type_exercise)
-            response = Response(status=200, mimetype='application/json', response='Tipo ejercicio eliminado satisfactoriamente')
+            response = json.dumps({"Message": "Tipo ejercicio eliminado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El tipo de ejercicio ingresado no existe')
+            response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -138,7 +138,7 @@ def load_type_exercise():
     try:
         type_exersice = Type_Exercise()
         type_exersice.load_archive(ruta)
-        response = Response(status=200, mimetype='application/json', response='Archivo TXT cargado satisfactoriamente')
+        response = json.dumps({"Message": "Archivo TXT cargado satisfactoriamente"}), 200
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -159,7 +159,7 @@ def create_exercise():
     print(exercise)
     try:
         exercise.save_exercise()
-        response = Response(status=200, mimetype='application/json', response='Ejercicio creado satisfactoriamente')
+        response = json.dumps({"Message": "Ejercicio creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
         print('Error causado por: ', e)
@@ -179,9 +179,9 @@ def update_exercise():
             exercise_exists = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio,
                                        nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
             exercise_exists.update_exercise(exercise_exists)
-            response = Response(status=200, mimetype='application/json', response='Ejercicio actualizado satisfactoriamente')
+            response = json.dumps({"Message": "Ejercicio actualizado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El ejercicio ingresado no existe')
+            response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -196,9 +196,9 @@ def delete_exercise():
         exercise = Exercise.get_by_id(id_ejercicio)
         if exercise:
             exercise.delete_exercise(exercise)
-            response = Response(status=200, mimetype='application/json', response='Ejercicio eliminado satisfactoriamente')
+            response = json.dumps({"Message": "Ejercicio eliminado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El ejercicio ingresado no existe')
+            response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -225,7 +225,7 @@ def create_specialist():
     # ---------------
     try:
         specialist.save_specialist()
-        response = Response(status=200, mimetype='application/json', response='Especialista creado satisfactoriamente')
+        response = json.dumps({"Message": "Especialista creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
         print('Error causado por: ', e)
@@ -245,9 +245,9 @@ def update_specialist():
             specialist_exists = Specialist(id_especialista=id_specialist, nombre=name, fecha_nacimiento=birthday_date,
                                            tarjeta_profesional=professional_card)
             specialist_exists.update_specialist(specialist_exists)
-            response = Response(status=200, mimetype='application/json', response='Especialista actualizado satisfactoriamente')
+            response = json.dumps({"Message": "Especialista actualizado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El especialista ingresado no existe')
+            response = json.dumps({"Message": "El especialista ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -262,9 +262,9 @@ def delete_specialist():
         specialist = Specialist.get_by_id(id_specialist)
         if specialist:
             specialist.delete_specialist(specialist)
-            response = Response(status=200, mimetype='application/json', response='Especialista eliminado satisfactoriamente')
+            response = json.dumps({"Message": "Especialista eliminado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El especialista ingresado no existe')
+            response = json.dumps({"Message": "El especialista ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -279,7 +279,21 @@ def load_specialist():
     try:
         specialist = Specialist()
         specialist.load_archive_csv(ruta)
-        response = Response(status=200, mimetype='application/json', response='Archivo CSV cargado satisfactoriamente')
+        response = json.dumps({"Message": "Archivo CSV cargado satisfactoriamente"}), 200
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+@SPECIALIST.route('/specialistloadmasive', methods=['POST'])
+def load_masive_specialist():
+    """Load masive data in specialist from archive"""
+    request_body = request.json
+    ruta = request_body['ruta']
+    try:
+        specialist = Specialist()
+        load = specialist.load_masive(ruta)
+        response = json.dumps({"Message" : "Carga Masiva satisfactoriamente", "Time_lapsed" : load})
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -294,7 +308,7 @@ def list_specialist():
     try:
         specialist = Specialist()
         specialist.donwload_json_specialist(dir, file_name)
-        response = Response(status=200, mimetype='application/json', response='Especialistas descargado a JSON satisfactoriamente')
+        response = json.dumps({"Message": "Especialistas descargado a JSON satisfactoriamente"}), 200
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -311,7 +325,7 @@ def create_registry():
     print(registry)
     try:
         registry.save_registry()
-        response = Response(status=200, mimetype='application/json', response='Registro creado satisfactoriamente')
+        response = json.dumps({"Message": "Registro creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
         print('Error causado por: ', e)
@@ -328,9 +342,9 @@ def update_registry():
         if registry_exists:
             registry_exists = Registry(id_registro=id_registry, fecha_registro=date_registry)
             registry_exists.update_registry(registry_exists)
-            response = Response(status=200, mimetype='application/json', response='Registro actualizado satisfactoriamente')
+            response = json.dumps({"Message": "Registro actualizado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El registro ingresado no existe')
+            response = json.dumps({"Message": "El registro ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -346,9 +360,9 @@ def delete_registy():
         print("registro", registry)
         if registry:
             registry.delete_registry(registry)
-            response = Response(status=200, mimetype='application/json', response='Registro eliminado satisfactoriamente')
+            response = json.dumps({"Message": "Registro eliminado satisfactoriamente"}), 200
         else:
-            response = Response(status=406, mimetype='application/json', response='El registro ingresado no existe')
+            response = json.dumps({"Message": "El registro ingresado no existe"}), 406
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -369,7 +383,7 @@ def create_body_part():
     exercise.bodyparts.append(bodyPart)
     try:
         bodyPart.save_body_part()
-        response = Response(status=200, mimetype='application/json')
+        response = json.dumps({"Message": "Registro parte cuerpo creado satisfactoriamente"}), 200
         return response
     except Exception as exception:
         print('Error : ', exception)
@@ -380,6 +394,18 @@ def create_body_part():
 def create_user_from_json():
     """Create bodyPart in database"""
     load_json_service.create_user_from_json()
+    try:
+        response = json.dumps({"Message": "Usuario ingresado desde archivo JSON satisfactoriamente"}), 200
+        return response
+    except Exception as exception:
+        print('Error : ', exception)
+        raise exception
+
+
+@ROUTINES.route('/createuserfromwebservice', methods=['POST'])
+def create_user_from_web_service():
+    """Create user in database from webservice"""
+    load_json_service.create_user_from_web_service()
     try:
         response = Response(status=200, mimetype='application/json')
         return response
