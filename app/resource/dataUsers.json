@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "id": 14,
+      "name": "Juan David",
+      "email": "jdca.07@gmail.com.co",
+      "password": "12345",
+      "is_admin": true
+    },
+    {
+      "id": 15,
+      "name": "Miguel",
+      "email": "miguel@gmail.com.co",
+      "password": "12345",
+      "is_admin": true
+    },
+    {
+      "id": 16,
+      "name": "Andres",
+      "email": "andres@gmail.com.co",
+      "password": "12345",
+      "is_admin": true
+    }
+  ]
+}

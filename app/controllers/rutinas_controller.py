@@ -13,6 +13,7 @@ from app.models.model_exercise import Exercise, BodyPart
 from app.models.model_exercise import Exercise
 from app.models.model_specialist import Specialist
 from app.models.model_registry import Registry
+from app.services import load_json_service
 
 @ROUTINES.route('/health', methods=['GET', 'OPTIONS'])
 def index():
@@ -330,6 +331,18 @@ def create_body_part():
     exercise.bodyparts.append(bodyPart)
     try:
         bodyPart.save_body_part()
+        response = Response(status=200, mimetype='application/json')
+        return response
+    except Exception as exception:
+        print('Error : ', exception)
+        raise exception
+
+
+@ROUTINES.route('/createuserfromjson', methods=['POST'])
+def create_user_from_json():
+    """Create bodyPart in database"""
+    load_json_service.create_user_from_json()
+    try:
         response = Response(status=200, mimetype='application/json')
         return response
     except Exception as exception:
