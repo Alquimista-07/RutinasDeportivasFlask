@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+
 from server import db
 
 class Exercise(db.Model, UserMixin):
@@ -9,7 +10,7 @@ class Exercise(db.Model, UserMixin):
     id_tipo_ejercicio = db.Column(db.Integer, db.ForeignKey('tipo_ejercicio.id_tipo_ejercicio'))
     nombre_ejercicio = db.Column(db.String(50), nullable=True)
     dsc_ejercicio = db.Column(db.String(200), nullable=True)
-    type_exercise = db.relationship("Type_Exercise", back_populates="exercise", cascade="all,delete")
+    type_exercise = db.relationship("Type_Exercise", backref="ejercicio", cascade="all,delete")
 
     def __repr__(self):
         return f'<Exercise {self.id_ejercicio}, {self.id_tipo_ejercicio}, {self.nombre_ejercicio}, {self.dsc_ejercicio}>'
@@ -24,12 +25,9 @@ class Exercise(db.Model, UserMixin):
 
     @staticmethod
     def update_exercise(exercise):
-        if not exercise:
-            db.session.merge(exercise)
-            db.session.commit()
-            db.session.close()
-        else:
-            print('El ejercicio ingresado no existe')
+        db.session.merge(exercise)
+        db.session.commit()
+        db.session.close()
 
     @staticmethod
     def delete_exercise(exercise):

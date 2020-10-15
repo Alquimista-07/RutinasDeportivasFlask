@@ -10,10 +10,16 @@ db = SQLAlchemy(APP)
 from app.controllers.rutinas_controller import ROUTINES
 from app.controllers.rutinas_controller import TYPE_EXERCISE
 from app.controllers.rutinas_controller import EXERCISE
+from app.controllers.rutinas_controller import SPECIALIST
+from app.controllers.rutinas_controller import REGISTRY
+
 
 APP.register_blueprint(ROUTINES)
 APP.register_blueprint(TYPE_EXERCISE)
 APP.register_blueprint(EXERCISE)
+APP.register_blueprint(SPECIALIST)
+APP.register_blueprint(REGISTRY)
+
 
 @APP.errorhandler(Exception)
 def handle_exception(error):

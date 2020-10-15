@@ -1,12 +1,17 @@
 import json
-from flask import Blueprint, Response, request
+
+from flask import Blueprint, Response, request, jsonify
 ROUTINES = Blueprint('routines', __name__)
 TYPE_EXERCISE = Blueprint('type_exercise', __name__)
 EXERCISE = Blueprint('exercise', __name__)
+SPECIALIST = Blueprint('specialist', __name__)
+REGISTRY = Blueprint('registry', __name__)
 
 from app.models.model_user import User
 from app.models.model_type_exercise import Type_Exercise
 from app.models.model_exercise import Exercise
+from app.models.model_specialist import Specialist
+from app.models.model_registry import Registry
 
 @ROUTINES.route('/health', methods=['GET', 'OPTIONS'])
 def index():
@@ -41,7 +46,7 @@ def create_type_excercise():
     type_exercise = Type_Exercise(id_tipo_ejercicio=id_tipo, dsc_tipo_ejercicio=dsc_tipo)
     try:
         type_exercise.save_type_exercise()
-        response = Response(status=200, mimetype='application/json')
+        response = Response(status=200, mimetype='application/json', response='Tipo de ejercicio creado satisfactoriamente')
         return  response
     except Exception as e:
         print('Error causado por: ', e)
@@ -53,11 +58,14 @@ def update_type_exercise():
     request_body = request.json
     id_tipo = request_body["id_tipo"]
     dsc_tipo = request_body["dsc_tipo"]
-    type_exercise_exist = Type_Exercise.get_by_id(id_tipo);
-    type_exercise_exist = Type_Exercise(id_tipo_ejercicio=id_tipo, dsc_tipo_ejercicio=dsc_tipo)
     try:
-        Type_Exercise.update_type_exercise(type_exercise_exist)
-        response = Response(status=200, mimetype='application/json')
+        type_exercise_exist = Type_Exercise.get_by_id(id_tipo)
+        if type_exercise_exist:
+            type_exercise_exist = Type_Exercise(id_tipo_ejercicio=id_tipo, dsc_tipo_ejercicio=dsc_tipo)
+            Type_Exercise.update_type_exercise(type_exercise_exist)
+            response = Response(status=200, mimetype='application/json', response='Tipo de ejercicio actualizado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El tipo de ejercicio ingresado no existe')
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -71,12 +79,30 @@ def delete_type_exercise():
     id_tipo_ejercicio = request_body['id_tipo_ejercicio']
     try:
         type_exercise = Type_Exercise.get_by_id(id_tipo_ejercicio)
-        type_exercise.delete_exercise(type_exercise)
-        response = Response(status=200, mimetype='application/json')
+        if type_exercise:
+            type_exercise.delete_exercise(type_exercise)
+            response = Response(status=200, mimetype='application/json', response='Tipo ejercicio eliminado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El tipo de ejercicio ingresado no existe')
         return response
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
+@TYPE_EXERCISE.route('/exercise_type_load', methods=['POST'])
+def load_type_exercise():
+    """Load data in type excercise from txt"""
+    request_body = request.json
+    ruta = request_body['ruta']
+    try:
+        type_exersice = Type_Exercise()
+        type_exersice.load_archive(ruta)
+        response = Response(status=200, mimetype='application/json', response='Archivo TXT cargado satisfactoriamente')
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
 
 @EXERCISE.route('/createExercise', methods=['POST'])
 def create_exercise():
@@ -86,10 +112,11 @@ def create_exercise():
     id_tipo_ejercicio = request_body['id_tipo_ejercicio']
     nombre_ejercicio = request_body['nombre_ejercicio']
     dsc_ejercicio = request_body['dsc_ejercicio']
-    exercise = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio, nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
+    exercise = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio,
+                        nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
     try:
         exercise.save_exercise()
-        response = Response(status=200, mimetype='application/json')
+        response = Response(status=200, mimetype='application/json', response='Ejercicio creado satisfactoriamente')
         return  response
     except Exception as e:
         print('Error causado por: ', e)
@@ -103,12 +130,16 @@ def update_exercise():
     id_tipo_ejercicio = request_body['id_tipo_ejercicio']
     nombre_ejercicio = request_body['nombre_ejercicio']
     dsc_ejercicio = request_body['dsc_ejercicio']
-    exercise_exists = Exercise.get_by_id(id_ejercicio)
-    exercise_exists = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio, nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
     try:
-        exercise_exists.update_exercise(exercise_exists)
-        response = Response(status=200, mimetype='application/json')
-        return  response
+        exercise_exists = Exercise.get_by_id(id_ejercicio)
+        if exercise_exists:
+            exercise_exists = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio,
+                                       nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
+            exercise_exists.update_exercise(exercise_exists)
+            response = Response(status=200, mimetype='application/json', response='Ejercicio actualizado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El ejercicio ingresado no existe')
+        return response
     except Exception as e:
         print('Error causado por: ', e)
         raise e
@@ -120,8 +151,161 @@ def delete_exercise():
     id_ejercicio = required_body['id_ejercicio']
     try:
         exercise = Exercise.get_by_id(id_ejercicio)
-        exercise.delete_exercise(exercise)
-        response = Response(status=200, mimetype='application/json')
+        if exercise:
+            exercise.delete_exercise(exercise)
+            response = Response(status=200, mimetype='application/json', response='Ejercicio eliminado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El ejercicio ingresado no existe')
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+@SPECIALIST.route('/createSpecialist', methods=['POST'])
+def create_specialist():
+    """Create Specialist in database"""
+    request_body = request.json
+    with_registry = request_body["with_registry"]
+    id_specialist = request_body["id_specialist"]
+    name = request_body["name"]
+    birthday_date = request_body["birthday_date"]
+    professional_card = request_body["professional_card"]
+    specialist = Specialist(id_especialista=id_specialist, nombre=name, fecha_nacimiento=birthday_date,
+                            tarjeta_profesional=professional_card)
+    #---------------
+    if with_registry:
+        id_registry = request_body["id_registry"]
+        date_regitry = request_body["date_registry"]
+
+        registry = Registry(id_registro=id_registry, fecha_registro=date_regitry)
+        specialist.registry = registry
+    # ---------------
+    try:
+        specialist.save_specialist()
+        response = Response(status=200, mimetype='application/json', response='Especialista creado satisfactoriamente')
+        return  response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+@SPECIALIST.route('/updateSpecialist', methods=['PUT'])
+def update_specialist():
+    """Update specialist in database with reltionship"""
+    request_body = request.json
+    id_specialist = request_body["id_specialist"]
+    name = request_body["name"]
+    birthday_date = request_body["birthday_date"]
+    professional_card = request_body["professional_card"]
+    try:
+        specialist_exists = Specialist.get_by_id(id_specialist)
+        if specialist_exists:
+            specialist_exists = Specialist(id_especialista=id_specialist, nombre=name, fecha_nacimiento=birthday_date,
+                                           tarjeta_profesional=professional_card)
+            specialist_exists.update_specialist(specialist_exists)
+            response = Response(status=200, mimetype='application/json', response='Especialista actualizado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El especialista ingresado no existe')
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+@SPECIALIST.route('/deleteSpecialist', methods=['DELETE'])
+def delete_specialist():
+    """Delete specialist from database"""
+    required_body = request.json
+    id_specialist = required_body['id_specialist']
+    try:
+        specialist = Specialist.get_by_id(id_specialist)
+        if specialist:
+            specialist.delete_specialist(specialist)
+            response = Response(status=200, mimetype='application/json', response='Especialista eliminado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El especialista ingresado no existe')
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+
+@SPECIALIST.route('/specialist_load', methods=['POST'])
+def load_specialist():
+    """Load data in specialist from csv"""
+    request_body = request.json
+    ruta = request_body['ruta']
+    try:
+        specialist = Specialist()
+        specialist.load_archive_csv(ruta)
+        response = Response(status=200, mimetype='application/json', response='Archivo CSV cargado satisfactoriamente')
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+@SPECIALIST.route('/download_specialist_json', methods=['POST'])
+def list_specialist():
+    """Download data specialist from database to JSON"""
+    request_body = request.json
+    dir = request_body['ruta']
+    file_name = request_body['file_name']
+    try:
+        specialist = Specialist()
+        specialist.donwload_json_specialist(dir, file_name)
+        response = Response(status=200, mimetype='application/json', response='Especialistas descargado a JSON satisfactoriamente')
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+
+@REGISTRY.route('/createRegistry', methods=['POST'])
+def create_registry():
+    """Create registry in database"""
+    request_body = request.json
+    id_registry = request_body["id_registry"]
+    date_registry = request_body["date_registry"]
+    registry = Registry(id_registro=id_registry, fecha_registro=date_registry)
+    print(registry)
+    try:
+        registry.save_registry()
+        response = Response(status=200, mimetype='application/json', response='Registro creado satisfactoriamente')
+        return  response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+@REGISTRY.route('/updateRegistry', methods=['PUT'])
+def update_registry():
+    """Update registry in database with reltionship"""
+    request_body = request.json
+    id_registry = request_body["id_registry"]
+    date_registry = request_body["date_registry"]
+    try:
+        registry_exists = Registry.get_by_id(id_registry)
+        if registry_exists:
+            registry_exists = Registry(id_registro=id_registry, fecha_registro=date_registry)
+            registry_exists.update_registry(registry_exists)
+            response = Response(status=200, mimetype='application/json', response='Registro actualizado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El registro ingresado no existe')
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+@REGISTRY.route('/deleteRegistry', methods=['DELETE'])
+def delete_registy():
+    """Delete registry from database"""
+    request_body = request.json
+    id_registry = request_body['id_registry']
+    try:
+        registry = Registry.get_by_id(id_registry)
+        print("registro", registry)
+        if registry:
+            registry.delete_registry(registry)
+            response = Response(status=200, mimetype='application/json', response='Registro eliminado satisfactoriamente')
+        else:
+            response = Response(status=406, mimetype='application/json', response='El registro ingresado no existe')
         return response
     except Exception as e:
         print('Error causado por: ', e)

@@ -1,6 +1,12 @@
 from flask_login import UserMixin
 from server import db
 
+import numpy as np
+from time import time
+
+def Load_Data(file_name):
+    data = np.genfromtxt(file_name, delimiter='|', names=True, dtype=None)
+    return data.tolist()
 
 class Type_Exercise(db.Model, UserMixin):
 
@@ -8,7 +14,7 @@ class Type_Exercise(db.Model, UserMixin):
 
     id_tipo_ejercicio = db.Column(db.Integer, primary_key=True)
     dsc_tipo_ejercicio = db.Column(db.String(50), nullable=True)
-    exercise = db.relationship('Exercise', back_populates="type_exercise")
+    exercise = db.relationship("Exercise", backref="tipo_ejercicio")
 
     def __repr__(self):
         return f'<Type_Exercise {self.id_tipo_ejercicio}, {self.dsc_tipo_ejercicio}>'
@@ -23,15 +29,33 @@ class Type_Exercise(db.Model, UserMixin):
 
     @staticmethod
     def update_type_exercise(type_exercise):
-        if not type_exercise:
-            db.session.merge(type_exercise)
-            db.session.commit()
-            db.session.close()
-        else:
-            print('El tipo de ejercicio ingresado no existe')
+        db.session.merge(type_exercise)
+        db.session.commit()
+        db.session.close()
 
     @staticmethod
     def delete_exercise(type_exercise):
         db.session.delete(type_exercise)
         db.session.commit()
         db.session.close()
+
+    @staticmethod
+    def load_archive(ruta):
+        tiempo = time()
+        try:
+            file_name = ruta
+            data = Load_Data(file_name)
+
+            for row in data:
+                record = Type_Exercise(**{
+                    'id_tipo_ejercicio': row[0],
+                    'dsc_tipo_ejercicio': row[1]
+                })
+                db.session.add(record)
+                db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+        finally:
+            db.session.close()
+            print("Tiempo transcurrido: " + str(time() - tiempo) + " s.")
