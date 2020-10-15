@@ -18,6 +18,7 @@ from app.services import load_json_service, specialist_service, registry_service
 @ROUTINES.route('/health', methods=['GET', 'OPTIONS'])
 def index():
     """Health of application"""
+    print(user_service.string_generator(8))
     return Response(json.dumps({'Status': 'OK'}))
 
 
@@ -25,7 +26,8 @@ def index():
 def create_user():
     """Create user in database"""
     request_body = request.json
-    id_user = request_body["id"]
+    user_id = user_service.users_count()
+    id_user = user_id + 1
     name = request_body["name"]
     email = request_body["email"]
     password = request_body["password"]
@@ -402,6 +404,20 @@ def create_user_from_json():
 def create_user_from_web_service():
     """Create user in database from webservice"""
     load_json_service.create_user_from_web_service()
+    try:
+        response = Response(status=200, mimetype='application/json')
+        return response
+    except Exception as exception:
+        print('Error : ', exception)
+        raise exception
+
+
+@ROUTINES.route('/createuserdinamic', methods=['POST'])
+def create_user_dinamic():
+    """Create user in database from webservice"""
+    request_body = request.json
+    insert_cant = request_body['insert_cant']
+    load_json_service.create_user_dynamic(insert_cant)
     try:
         response = Response(status=200, mimetype='application/json')
         return response

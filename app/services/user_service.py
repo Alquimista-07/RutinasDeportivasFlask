@@ -1,3 +1,5 @@
+import string
+import random
 from werkzeug.security import generate_password_hash, check_password_hash
 from server import db
 from app.models.model_user import User
@@ -34,3 +36,11 @@ def delete_user(user):
     db.session.delete(user)
     db.session.commit()
     db.session.close()
+
+
+def users_count():
+    return User.query.count()
+
+
+def string_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
