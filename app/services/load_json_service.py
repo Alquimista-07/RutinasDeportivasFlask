@@ -3,6 +3,7 @@ import requests
 from app.models.model_user import User
 from app.services import user_service
 
+
 def create_user_from_json():
     my_file = open('app/resource/dataUsers.json')
     data = json.load(my_file)
@@ -33,5 +34,19 @@ def create_user_from_web_service():
         is_admin = True
         user = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
         user_service.save(user)
+
+
+def create_user_dynamic(insert_cant):
+    for x in range(insert_cant):
+        user_id = user_service.users_count()
+        id_user = user_id + 1
+        name = user_service.string_generator(7)
+        email = user_service.string_generator(7)+'@gmail.com'
+        password = user_service.string_generator(7)
+        is_admin = True
+        user = User(id=id_user, name=name, email=email, password=password, is_admin=is_admin)
+        user_service.save(user)
+
+
 
 
