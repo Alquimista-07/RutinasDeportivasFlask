@@ -400,3 +400,15 @@ def create_user_from_json():
     except Exception as exception:
         print('Error : ', exception)
         raise exception
+
+
+@ROUTINES.route('/createuserfromwebservice', methods=['POST'])
+def create_user_from_web_service():
+    """Create user in database from webservice"""
+    load_json_service.create_user_from_web_service()
+    try:
+        response = Response(status=200, mimetype='application/json')
+        return response
+    except Exception as exception:
+        print('Error : ', exception)
+        raise exception
