@@ -38,7 +38,7 @@ def create_user():
         print('Error : ', exception)
         raise exception
 
-@TYPE_EXERCISE.route('/createTypeExercise', methods=['POST'])
+@TYPE_EXERCISE.route('/createtypeexercise', methods=['POST'])
 def create_type_excercise():
     """Create type exercise in database"""
     request_body = request.json
@@ -54,7 +54,7 @@ def create_type_excercise():
         print('Error causado por: ', e)
         raise e
 
-@TYPE_EXERCISE.route('/updateTypeExercise', methods=['PUT'])
+@TYPE_EXERCISE.route('/updatetypeexercise', methods=['PUT'])
 def update_type_exercise():
     """Update type exercuse from database"""
     request_body = request.json
@@ -74,7 +74,7 @@ def update_type_exercise():
         raise e
 
 
-@TYPE_EXERCISE.route('/deleteTypeExercise', methods=['DELETE'])
+@TYPE_EXERCISE.route('/deletetypeexercise', methods=['DELETE'])
 def delete_type_exercise():
     """Delete type exercise from database"""
     request_body = request.json
@@ -91,7 +91,7 @@ def delete_type_exercise():
         print('Error causado por: ', e)
         raise e
 
-@TYPE_EXERCISE.route('/exercise_type_load', methods=['POST'])
+@TYPE_EXERCISE.route('/exercisetypeload', methods=['POST'])
 def load_type_exercise():
     """Load data in type excercise from txt"""
     request_body = request.json
@@ -126,7 +126,7 @@ def create_exercise():
         print('Error causado por: ', e)
         raise e
 
-@EXERCISE.route('/updateExercise', methods=['PUT'])
+@EXERCISE.route('/updateexercise', methods=['PUT'])
 def update_exercise():
     """Update exercise in database with reltionship"""
     request_body = request.json
@@ -148,7 +148,7 @@ def update_exercise():
         print('Error causado por: ', e)
         raise e
 
-@EXERCISE.route('/deleteExercise', methods=['DELETE'])
+@EXERCISE.route('/deleteexercise', methods=['DELETE'])
 def delete_exercise():
     """Delete exercise from database"""
     required_body = request.json
@@ -165,7 +165,7 @@ def delete_exercise():
         print('Error causado por: ', e)
         raise e
 
-@SPECIALIST.route('/createSpecialist', methods=['POST'])
+@SPECIALIST.route('/createspecialist', methods=['POST'])
 def create_specialist():
     """Create Specialist in database"""
     request_body = request.json
@@ -192,7 +192,7 @@ def create_specialist():
         print('Error causado por: ', e)
         raise e
 
-@SPECIALIST.route('/updateSpecialist', methods=['PUT'])
+@SPECIALIST.route('/updatespecialist', methods=['PUT'])
 def update_specialist():
     """Update specialist in database with reltionship"""
     request_body = request.json
@@ -214,7 +214,7 @@ def update_specialist():
         print('Error causado por: ', e)
         raise e
 
-@SPECIALIST.route('/deleteSpecialist', methods=['DELETE'])
+@SPECIALIST.route('/deletespecialist', methods=['DELETE'])
 def delete_specialist():
     """Delete specialist from database"""
     required_body = request.json
@@ -232,7 +232,7 @@ def delete_specialist():
         raise e
 
 
-@SPECIALIST.route('/specialist_load', methods=['POST'])
+@SPECIALIST.route('/specialistload', methods=['POST'])
 def load_specialist():
     """Load data in specialist from csv"""
     request_body = request.json
@@ -246,7 +246,7 @@ def load_specialist():
         print('Error causado por: ', e)
         raise e
 
-@SPECIALIST.route('/download_specialist_json', methods=['POST'])
+@SPECIALIST.route('/downloadspecialistjson', methods=['POST'])
 def list_specialist():
     """Download data specialist from database to JSON"""
     request_body = request.json
@@ -262,7 +262,7 @@ def list_specialist():
         raise e
 
 
-@REGISTRY.route('/createRegistry', methods=['POST'])
+@REGISTRY.route('/createregistry', methods=['POST'])
 def create_registry():
     """Create registry in database"""
     request_body = request.json
@@ -278,7 +278,7 @@ def create_registry():
         print('Error causado por: ', e)
         raise e
 
-@REGISTRY.route('/updateRegistry', methods=['PUT'])
+@REGISTRY.route('/updateregistry', methods=['PUT'])
 def update_registry():
     """Update registry in database with reltionship"""
     request_body = request.json
@@ -297,7 +297,7 @@ def update_registry():
         print('Error causado por: ', e)
         raise e
 
-@REGISTRY.route('/deleteRegistry', methods=['DELETE'])
+@REGISTRY.route('/deleteregistry', methods=['DELETE'])
 def delete_registy():
     """Delete registry from database"""
     request_body = request.json
