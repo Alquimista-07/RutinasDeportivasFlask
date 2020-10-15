@@ -2,7 +2,7 @@ import json
 from app.models.model_user import User
 
 def create_user_from_json():
-    my_file = open('C:/Users/migue/PycharmProjects/HolaMundo/app/resource/dataUsers.json')
+    my_file = open('app/services/load_json_service.py')
     data = json.load(my_file)
 
     for values in data['data']:
