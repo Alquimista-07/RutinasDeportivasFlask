@@ -84,3 +84,27 @@ class Specialist(db.Model, UserMixin):
             with open(os.path.join(dir, file_name), 'a') as file:
                 file.write(format_json +'\n')
         db.session.close()
+
+    @staticmethod
+    def load_masive(ruta):
+        tiempo = time()
+        try:
+            file_name = ruta
+            data = Load_Data(file_name)
+
+            for row in data:
+                record = Specialist(**{
+                    'id_especialista': row[0],
+                    'nombre': row[1],
+                    'fecha_nacimiento': row[2],
+                    'tarjeta_profesional': row[3]
+                })
+                db.session.add(record)
+                db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+        finally:
+            db.session.close()
+            response = str(time() - tiempo) + " s."
+            return response
