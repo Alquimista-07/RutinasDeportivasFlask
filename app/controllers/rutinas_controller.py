@@ -13,12 +13,13 @@ from app.models.model_exercise import Exercise, BodyPart
 from app.models.model_exercise import Exercise
 from app.models.model_specialist import Specialist
 from app.models.model_registry import Registry
-from app.services import load_json_service, specialist_service, registry_service, type_exercise_service, user_service
+from app.services import load_json_service, specialist_service, \
+    registry_service, type_exercise_service, user_service, \
+    body_part_service, exercise_service
 
 @ROUTINES.route('/health', methods=['GET', 'OPTIONS'])
 def index():
     """Health of application"""
-    print(user_service.string_generator(8))
     return Response(json.dumps({'Status': 'OK'}))
 
 
@@ -62,7 +63,7 @@ def update_user():
         print('Error : ', exception)
         raise exception
 
-@TYPE_EXERCISE.route('/deleteuser', methods=['DELETE'])
+@ROUTINES.route('/deleteuser', methods=['DELETE'])
 def deleteuser():
     """Delete type exercise from database"""
     request_body = request.json
@@ -73,7 +74,7 @@ def deleteuser():
             user_service.delete_user(user)
             response = json.dumps({"Message": "Usuario eliminado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El usuario ingresado no existe"}), 406
+            response = json.dumps({"Message": "El usuario ingresado no existe"}), 404
         return response
     except Exception as exception:
         print('Error: ', exception)
@@ -83,10 +84,10 @@ def deleteuser():
 def create_type_excercise():
     """Create type exercise in database"""
     request_body = request.json
-    id_tipo = request_body["id_tipo"]
+    type_id = type_exercise_service.count_type_exercise()
+    id_tipo = type_id + 1
     dsc_tipo = request_body["dsc_tipo"]
     type_exercise = Type_Exercise(id_tipo_ejercicio=id_tipo, dsc_tipo_ejercicio=dsc_tipo)
-    print(type_exercise)
     try:
         type_exercise_service.save_type_exercise(type_exercise)
         response = json.dumps({"Message": "Tipo de ejercicio creado satisfactoriamente"}), 200
@@ -108,7 +109,7 @@ def update_type_exercise():
             type_exercise_service.update_type_exercise(type_exercise_exist)
             response = json.dumps({"Message": "Tipo de ejercicio actualizado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 406
+            response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -126,7 +127,7 @@ def delete_type_exercise():
             type_exercise_service.delete_exercise(type_exercise)
             response = json.dumps({"Message": "Tipo ejercicio eliminado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 406
+            response = json.dumps({"Message": "El tipo de ejercicio ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -153,13 +154,13 @@ def create_exercise():
     id_tipo_ejercicio = request_body['id_tipo_ejercicio']
     nombre_ejercicio = request_body['nombre_ejercicio']
     dsc_ejercicio = request_body['dsc_ejercicio']
-    bodyPart = BodyPart(id_musculo=9, dsc_musculo="desc")
+    bodyPart = BodyPart(id_musculo=body_part_service.count_body_part() + 1, dsc_musculo="desc")
     exercise = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio, nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
     bodyPart.ejercicio.append(exercise)
     exercise.bodyparts.append(bodyPart)
     print(exercise)
     try:
-        exercise.save_exercise()
+        Exercise.save_exercise(exercise)
         response = json.dumps({"Message": "Ejercicio creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
@@ -182,7 +183,7 @@ def update_exercise():
             exercise_exists.update_exercise(exercise_exists)
             response = json.dumps({"Message": "Ejercicio actualizado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 406
+            response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -199,7 +200,7 @@ def delete_exercise():
             exercise.delete_exercise(exercise)
             response = json.dumps({"Message": "Ejercicio eliminado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 406
+            response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -248,7 +249,7 @@ def update_specialist():
             specialist_service.update_specialist(specialist_exists)
             response = json.dumps({"Message": "Especialista actualizado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El especialista ingresado no existe"}), 406
+            response = json.dumps({"Message": "El especialista ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -265,7 +266,7 @@ def delete_specialist():
             specialist_service.delete_specialist(specialist)
             response = json.dumps({"Message": "Especialista eliminado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El especialista ingresado no existe"}), 406
+            response = json.dumps({"Message": "El especialista ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -342,7 +343,7 @@ def update_registry():
             registry_service.update_registry(registry_exists)
             response = json.dumps({"Message": "Registro actualizado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El registro ingresado no existe"}), 406
+            response = json.dumps({"Message": "El registro ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -360,7 +361,7 @@ def delete_registy():
             registry_service.delete_registry(registry)
             response = json.dumps({"Message": "Registro eliminado satisfactoriamente"}), 200
         else:
-            response = json.dumps({"Message": "El registro ingresado no existe"}), 406
+            response = json.dumps({"Message": "El registro ingresado no existe"}), 404
         return response
     except Exception as e:
         print('Error causado por: ', e)
@@ -375,12 +376,12 @@ def create_body_part():
     dsc_musculo = request_body["dsc_musculo"]
 
     bodyPart = BodyPart(id_musculo=id_musculo, dsc_musculo=dsc_musculo)
-    exercise = Exercise(id_ejercicio=10, id_tipo_ejercicio=1,
+    exercise = Exercise(id_ejercicio=exercise_service.count_exercise() + 1, id_tipo_ejercicio=1,
                         nombre_ejercicio="nombre", dsc_ejercicio="desc")
     bodyPart.ejercicio.append(exercise)
     exercise.bodyparts.append(bodyPart)
     try:
-        bodyPart.save_body_part()
+        BodyPart.save_body_part(bodyPart)
         response = json.dumps({"Message": "Registro parte cuerpo creado satisfactoriamente"}), 200
         return response
     except Exception as exception:
@@ -424,3 +425,33 @@ def create_user_dinamic():
     except Exception as exception:
         print('Error : ', exception)
         raise exception
+
+
+@ROUTINES.route('/downloadcsvuser', methods=['POST'])
+def download_user_csv():
+    """Download data user from database to CSV"""
+    request_body = request.json
+    dir = request_body['ruta']
+    file_name = request_body['file_name']
+    try:
+        user_service.donwload_csv_user(dir, file_name)
+        response = json.dumps({"Message": "Usuario descargado a CSV satisfactoriamente"}), 200
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+
+@ROUTINES.route('/downloadtxtuser', methods=['POST'])
+def download_user_txt():
+    """Download data user from database to CSV"""
+    request_body = request.json
+    dir = request_body['ruta']
+    file_name = request_body['file_name']
+    try:
+        user_service.download_txt_user(dir, file_name)
+        response = json.dumps({"Message": "Usuario descargado a TXT satisfactoriamente"}), 200
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
