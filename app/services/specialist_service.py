@@ -31,6 +31,9 @@ def delete_specialist(specialist):
     db.session.close()
 
 
+def count_specialist():
+    return Specialist.query.count()
+
 def load_archive_csv(ruta):
     tiempo = time()
     try:
@@ -58,7 +61,12 @@ def donwload_json_specialist(dir, file_name):
     data = db.session.query(Specialist)
     dir = dir
     file_name = file_name
+    increment = 0
+    start_json = '{ "data": ['
+    end_json = ''
+    separador = ','
     for specialist in data:
+        increment = increment + 1
         record = specialist.id_especialista, specialist.nombre, specialist.fecha_nacimiento.strftime(
             '%Y-%m-%d'), specialist.tarjeta_profesional
         format_json = json.dumps({
@@ -68,8 +76,15 @@ def donwload_json_specialist(dir, file_name):
             "professional_card": record[3]
         }, separators=(",", ":"))
 
+        if increment > 1:
+            start_json = ''
+
+        if increment == count_specialist():
+            end_json = '] }'
+            separador = ''
+
         with open(os.path.join(dir, file_name), 'a') as file:
-            file.write(format_json + '\n')
+            file.write(start_json + format_json + end_json + separador + '\n')
     db.session.close()
 
 

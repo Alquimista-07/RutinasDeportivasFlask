@@ -44,3 +44,9 @@ def load_archive(ruta):
     finally:
         db.session.close()
         print("Tiempo transcurrido: " + str(time() - tiempo) + " s.")
+
+
+def count_type_exercise():
+    return Type_Exercise.query.count()
+
+
