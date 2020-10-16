@@ -62,7 +62,7 @@ def update_user():
         print('Error : ', exception)
         raise exception
 
-@TYPE_EXERCISE.route('/deleteuser', methods=['DELETE'])
+@ROUTINES.route('/deleteuser', methods=['DELETE'])
 def deleteuser():
     """Delete type exercise from database"""
     request_body = request.json
@@ -424,3 +424,33 @@ def create_user_dinamic():
     except Exception as exception:
         print('Error : ', exception)
         raise exception
+
+
+@ROUTINES.route('/downloadcsvuser', methods=['POST'])
+def download_user_csv():
+    """Download data user from database to CSV"""
+    request_body = request.json
+    dir = request_body['ruta']
+    file_name = request_body['file_name']
+    try:
+        user_service.donwload_csv_user(dir, file_name)
+        response = json.dumps({"Message": "Usuario descargado a CSV satisfactoriamente"}), 200
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
+
+
+@ROUTINES.route('/downloadtxtuser', methods=['POST'])
+def download_user_txt():
+    """Download data user from database to CSV"""
+    request_body = request.json
+    dir = request_body['ruta']
+    file_name = request_body['file_name']
+    try:
+        user_service.download_txt_user(dir, file_name)
+        response = json.dumps({"Message": "Usuario descargado a TXT satisfactoriamente"}), 200
+        return response
+    except Exception as e:
+        print('Error causado por: ', e)
+        raise e
