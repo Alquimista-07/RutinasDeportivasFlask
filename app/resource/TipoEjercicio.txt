@@ -1,0 +1,10 @@
+id_tipo_ejercicio|dsc_tipo_ejercicio
+1|Ejercicio prueba 1
+2|Ejercicio prueba 2
+3|Ejercicio prueba 3
+4|Ejercicio prueba 4
+5|Ejercicio prueba 5
+6|Ejercicio prueba 6
+7|Ejercicio prueba 7
+8|Ejercicio prueba 8
+9|Ejercicio prueba 9
