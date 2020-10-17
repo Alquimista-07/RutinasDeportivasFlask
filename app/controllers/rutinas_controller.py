@@ -17,6 +17,7 @@ from app.services import load_json_service, specialist_service, \
     registry_service, type_exercise_service, user_service, \
     body_part_service, exercise_service
 
+
 @ROUTINES.route('/health', methods=['GET', 'OPTIONS'])
 def index():
     """Health of application"""
@@ -63,6 +64,7 @@ def update_user():
         print('Error : ', exception)
         raise exception
 
+
 @ROUTINES.route('/deleteuser', methods=['DELETE'])
 def deleteuser():
     """Delete type exercise from database"""
@@ -80,6 +82,7 @@ def deleteuser():
         print('Error: ', exception)
         raise exception
 
+
 @TYPE_EXERCISE.route('/createtypeexercise', methods=['POST'])
 def create_type_excercise():
     """Create type exercise in database"""
@@ -95,6 +98,7 @@ def create_type_excercise():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
 
 @TYPE_EXERCISE.route('/updatetypeexercise', methods=['PUT'])
 def update_type_exercise():
@@ -133,6 +137,7 @@ def delete_type_exercise():
         print('Error causado por: ', e)
         raise e
 
+
 @TYPE_EXERCISE.route('/exercisetypeload', methods=['POST'])
 def load_type_exercise():
     """Load data in type excercise from txt"""
@@ -145,6 +150,7 @@ def load_type_exercise():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
 
 @EXERCISE.route('/createexercise', methods=['POST'])
 def create_exercise():
@@ -160,12 +166,13 @@ def create_exercise():
     exercise.bodyparts.append(bodyPart)
     print(exercise)
     try:
-        Exercise.save_exercise(exercise)
+        exercise_service.save_exercise(exercise)
         response = json.dumps({"Message": "Ejercicio creado satisfactoriamente"}), 200
         return  response
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
 
 @EXERCISE.route('/updateexercise', methods=['PUT'])
 def update_exercise():
@@ -176,11 +183,11 @@ def update_exercise():
     nombre_ejercicio = request_body['nombre_ejercicio']
     dsc_ejercicio = request_body['dsc_ejercicio']
     try:
-        exercise_exists = Exercise.get_by_id(id_ejercicio)
+        exercise_exists = exercise_service.get_by_id(id_ejercicio)
         if exercise_exists:
             exercise_exists = Exercise(id_ejercicio=id_ejercicio, id_tipo_ejercicio=id_tipo_ejercicio,
                                        nombre_ejercicio=nombre_ejercicio, dsc_ejercicio=dsc_ejercicio)
-            exercise_exists.update_exercise(exercise_exists)
+            exercise_service.update_exercise(exercise_exists)
             response = json.dumps({"Message": "Ejercicio actualizado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 404
@@ -189,15 +196,17 @@ def update_exercise():
         print('Error causado por: ', e)
         raise e
 
+
 @EXERCISE.route('/deleteexercise', methods=['DELETE'])
 def delete_exercise():
     """Delete exercise from database"""
     required_body = request.json
     id_ejercicio = required_body['id_ejercicio']
     try:
-        exercise = Exercise.get_by_id(id_ejercicio)
+        exercise = exercise_service.get_by_id(id_ejercicio)
+        print(exercise)
         if exercise:
-            exercise.delete_exercise(exercise)
+            exercise_service.delete_exercise(exercise)
             response = json.dumps({"Message": "Ejercicio eliminado satisfactoriamente"}), 200
         else:
             response = json.dumps({"Message": "El ejercicio ingresado no existe"}), 404
@@ -205,6 +214,7 @@ def delete_exercise():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
 
 @SPECIALIST.route('/createspecialist', methods=['POST'])
 def create_specialist():
@@ -233,6 +243,7 @@ def create_specialist():
         print('Error causado por: ', e)
         raise e
 
+
 @SPECIALIST.route('/updatespecialist', methods=['PUT'])
 def update_specialist():
     """Update specialist in database with reltionship"""
@@ -254,6 +265,7 @@ def update_specialist():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
 
 @SPECIALIST.route('/deletespecialist', methods=['DELETE'])
 def delete_specialist():
@@ -286,6 +298,7 @@ def load_specialist():
         print('Error causado por: ', e)
         raise e
 
+
 @SPECIALIST.route('/specialistloadmasive', methods=['POST'])
 def load_masive_specialist():
     """Load masive data in specialist from archive"""
@@ -298,6 +311,7 @@ def load_masive_specialist():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
 
 @SPECIALIST.route('/downloadspecialistjson', methods=['POST'])
 def list_specialist():
@@ -330,6 +344,7 @@ def create_registry():
         print('Error causado por: ', e)
         raise e
 
+
 @REGISTRY.route('/updateregistry', methods=['PUT'])
 def update_registry():
     """Update registry in database with reltionship"""
@@ -348,6 +363,7 @@ def update_registry():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+
 
 @REGISTRY.route('/deleteregistry', methods=['DELETE'])
 def delete_registy():
@@ -381,7 +397,7 @@ def create_body_part():
     bodyPart.ejercicio.append(exercise)
     exercise.bodyparts.append(bodyPart)
     try:
-        BodyPart.save_body_part(bodyPart)
+        body_part_service.save_body_part(bodyPart)
         response = json.dumps({"Message": "Registro parte cuerpo creado satisfactoriamente"}), 200
         return response
     except Exception as exception:
@@ -455,3 +471,4 @@ def download_user_txt():
     except Exception as e:
         print('Error causado por: ', e)
         raise e
+

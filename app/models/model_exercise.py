@@ -25,26 +25,6 @@ class Exercise(db.Model, UserMixin):
     def __repr__(self):
         return f'<Exercise {self.id_ejercicio}, {self.id_tipo_ejercicio}, {self.nombre_ejercicio}, {self.dsc_ejercicio}>'
 
-    def save_exercise(self):
-        db.session.add(self)
-        db.session.commit()
-
-    @staticmethod
-    def get_by_id(id_ejercicio):
-        return Exercise.query.get(id_ejercicio)
-
-    @staticmethod
-    def update_exercise(exercise):
-        db.session.merge(exercise)
-        db.session.commit()
-        db.session.close()
-
-    @staticmethod
-    def delete_exercise(exercise):
-        db.session.delete(exercise)
-        db.session.commit()
-        db.session.close()
-
 
 class BodyPart(db.Model, UserMixin):
 
@@ -58,6 +38,3 @@ class BodyPart(db.Model, UserMixin):
     def __repr__(self):
         return f'<BodyPart {self.id_musculo}, {self.desc_musculo}>'
 
-    def save_body_part(self):
-        db.session.add(self)
-        db.session.commit()
